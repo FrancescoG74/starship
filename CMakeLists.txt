@@ -93,26 +93,34 @@ FetchContent_MakeAvailable(JoltPhysics godot-cpp)
 # --------------------------------------------------------------------------- #
 # The GDExtension shared library, one per godot-cpp variant
 # --------------------------------------------------------------------------- #
-set(STARSHIP_SOURCES
-    src/register_types.cpp
-    src/register_types.h
-    src/jolt_layers.h
-    src/jolt_world.cpp
-    src/jolt_world.h
-    src/conversions.h
-    src/starship.cpp
-    src/starship.h
-    src/starship_world.cpp
-    src/starship_world.h
+set(STARSHIP_HEADERS
+    headers/conversions.h
+    headers/jolt_layers.h
+    headers/jolt_world.h
+    headers/register_types.h
+    headers/starship.h
+    headers/starship_world.h
 )
+
+set(STARSHIP_SOURCES
+    src/jolt_world.cpp
+    src/register_types.cpp
+    src/starship.cpp
+    src/starship_world.cpp
+)
+
+set(STARSHIP_ALL ${STARSHIP_SOURCES} ${STARSHIP_HEADERS})
 
 foreach(TARGET_ALIAS IN LISTS STARSHIP_GODOT_TARGETS)
     set(TARGET_NAME "starship.${TARGET_ALIAS}")
     set(LINK_TARGET "godot-cpp::${TARGET_ALIAS}")
 
     add_library(${TARGET_NAME} SHARED)
-    target_sources(${TARGET_NAME} PRIVATE ${STARSHIP_SOURCES})
-    target_include_directories(${TARGET_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src")
+    target_sources(${TARGET_NAME} PRIVATE ${STARSHIP_ALL})
+    target_include_directories(${TARGET_NAME} PRIVATE 
+        "${CMAKE_CURRENT_SOURCE_DIR}/src"
+        "${CMAKE_CURRENT_SOURCE_DIR}/headers"
+    )
     target_link_libraries(${TARGET_NAME} PRIVATE ${LINK_TARGET} Jolt)
 
     # Keep float behaviour identical to the one libJolt was compiled with.
