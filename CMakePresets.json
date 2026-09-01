@@ -1,0 +1,70 @@
+{
+    "version": 6,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 24,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "base",
+            "hidden": true,
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/${presetName}"
+        },
+        {
+            "name": "clang",
+            "inherits": "base",
+            "displayName": "Clang / Release",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_CXX_COMPILER": "clang++",
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "clang-debug",
+            "inherits": "clang",
+            "displayName": "Clang / Debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "clang-export",
+            "inherits": "clang",
+            "displayName": "Clang / Release + template_release (for exporting)",
+            "cacheVariables": {
+                "STARSHIP_GODOT_TARGETS": "editor;template_debug;template_release"
+            }
+        },
+        {
+            "name": "gcc",
+            "inherits": "base",
+            "displayName": "GCC / Release (fallback)",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "gcc",
+                "CMAKE_CXX_COMPILER": "g++",
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "clang",
+            "configurePreset": "clang"
+        },
+        {
+            "name": "clang-debug",
+            "configurePreset": "clang-debug"
+        },
+        {
+            "name": "clang-export",
+            "configurePreset": "clang-export"
+        },
+        {
+            "name": "gcc",
+            "configurePreset": "gcc"
+        }
+    ]
+}

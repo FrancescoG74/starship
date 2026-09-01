@@ -1,0 +1,22 @@
+[configuration]
+
+entry_symbol = "starship_library_init"
+compatibility_minimum = "4.4"
+reloadable = true
+
+[libraries]
+
+linux.editor.x86_64 = "res://bin/libstarship.linux.editor.x86_64.so"
+linux.debug.x86_64 = "res://bin/libstarship.linux.template_debug.x86_64.so"
+linux.release.x86_64 = "res://bin/libstarship.linux.template_release.x86_64.so"
+linux.editor.arm64 = "res://bin/libstarship.linux.editor.arm64.so"
+linux.debug.arm64 = "res://bin/libstarship.linux.template_debug.arm64.so"
+linux.release.arm64 = "res://bin/libstarship.linux.template_release.arm64.so"
+
+windows.editor.x86_64 = "res://bin/libstarship.windows.editor.x86_64.dll"
+windows.debug.x86_64 = "res://bin/libstarship.windows.template_debug.x86_64.dll"
+windows.release.x86_64 = "res://bin/libstarship.windows.template_release.x86_64.dll"
+
+macos.editor = "res://bin/libstarship.macos.editor.dylib"
+macos.debug = "res://bin/libstarship.macos.template_debug.dylib"
+macos.release = "res://bin/libstarship.macos.template_release.dylib"

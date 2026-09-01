@@ -1,0 +1,10 @@
+# Build output
+build/
+compile_commands.json
+
+# Compiled GDExtension libraries
+godot/bin/
+
+# Godot editor cache
+godot/.godot/
+godot/*.import
