@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/hud.gd" id="1_hud"]
 [ext_resource type="Script" path="res://scripts/runway_markers.gd" id="2_markers"]
+[ext_resource type="Script" path="res://scripts/terrain_generator.gd" id="3_terrain"]
 
 [sub_resource type="ProceduralSkyMaterial" id="SkyMaterial_1"]
 sky_top_color = Color(0.16, 0.35, 0.72, 1)
@@ -70,12 +71,24 @@ transform = Transform3D(0.866025, -0.25, 0.433013, 0, 0.866025, 0.5, -0.5, -0.43
 shadow_enabled = true
 directional_shadow_max_distance = 400.0
 
+[node name="ProceduralTerrain" type="Node3D" parent="."]
+script = ExtResource("3_terrain")
+terrain_size = 256
+terrain_scale = 2.0
+noise_scale = 100.0
+max_height = 150.0
+seed_value = 42
+octaves = 4
+persistence = 0.55
+lacunarity = 2.1
+
 [node name="Ground" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.05, 0)
 mesh = SubResource("Mesh_ground")
+visible = false
 
 [node name="Runway" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 50, 0)
 mesh = SubResource("Mesh_runway")
 
 [node name="RunwayMarkers" type="Node3D" parent="."]
@@ -84,10 +97,10 @@ script = ExtResource("2_markers")
 [node name="World" type="StarshipWorld" parent="."]
 gravity = 9.81
 runway_size = Vector3(60, 1, 4000)
-runway_center = Vector3(0, -0.5, 0)
+runway_center = Vector3(0, 50, 0)
 
 [node name="Starship" type="Starship" parent="World"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.62, 1800)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 250, 1800)
 
 [node name="Fuselage" type="MeshInstance3D" parent="World/Starship"]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0)
