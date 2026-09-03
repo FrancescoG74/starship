@@ -1,8 +1,9 @@
-[gd_scene load_steps=15 format=3]
+[gd_scene load_steps=16 format=3]
 
 [ext_resource type="Script" path="res://scripts/hud.gd" id="1_hud"]
 [ext_resource type="Script" path="res://scripts/runway_markers.gd" id="2_markers"]
 [ext_resource type="Script" path="res://scripts/terrain_generator.gd" id="3_terrain"]
+[ext_resource type="Script" path="res://scripts/gyro_horizon.gd" id="4_gyro"]
 
 [sub_resource type="ProceduralSkyMaterial" id="SkyMaterial_1"]
 sky_top_color = Color(0.16, 0.35, 0.72, 1)
@@ -137,4 +138,14 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 6
 script = ExtResource("1_hud")
+starship_path = NodePath("../../World/Starship")
+
+[node name="GyroHorizon" type="Control" parent="HUD"]
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -240.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = 240.0
+script = ExtResource("4_gyro")
 starship_path = NodePath("../../World/Starship")
