@@ -90,6 +90,23 @@ FetchContent_Declare(godot-cpp
 
 FetchContent_MakeAvailable(JoltPhysics godot-cpp)
 
+# godot-cpp's windows.cmake assumes any compiler reporting CXX_COMPILER_ID
+# "Clang" on Windows is a MinGW-flavoured clang and unconditionally adds
+# "-lstdc++". Plain clang/clang++ from llvm.org instead targets the MSVC ABI
+# and has no libstdc++, so that flag makes the linker fail looking for a
+# nonexistent stdc++.lib. Strip it from godot-cpp's link interface in that case.
+if(WIN32 AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND NOT CMAKE_CXX_COMPILER_FRONTEND_VARIANT STREQUAL "MSVC")
+    foreach(GODOTCPP_VARIANT editor template_debug template_release)
+        if(TARGET godot-cpp.${GODOTCPP_VARIANT})
+            get_target_property(GODOTCPP_LINK_OPTS godot-cpp.${GODOTCPP_VARIANT} INTERFACE_LINK_OPTIONS)
+            if(GODOTCPP_LINK_OPTS)
+                list(FILTER GODOTCPP_LINK_OPTS EXCLUDE REGEX "lstdc\\+\\+")
+                set_target_properties(godot-cpp.${GODOTCPP_VARIANT} PROPERTIES INTERFACE_LINK_OPTIONS "${GODOTCPP_LINK_OPTS}")
+            endif()
+        endif()
+    endforeach()
+endif()
+
 # --------------------------------------------------------------------------- #
 # The GDExtension shared library, one per godot-cpp variant
 # --------------------------------------------------------------------------- #
@@ -114,6 +131,15 @@ foreach(TARGET_ALIAS IN LISTS STARSHIP_GODOT_TARGETS)
     target_sources(${TARGET_NAME} PRIVATE ${STARSHIP_SOURCES})
     target_include_directories(${TARGET_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src")
     target_link_libraries(${TARGET_NAME} PRIVATE ${LINK_TARGET} Jolt)
+
+    # On the Windows/MSVC ABI (including clang targeting it), pointer-to-member-function
+    # size depends on the class's inheritance model. godot-cpp's method_bind.hpp normally
+    # reinterpret_casts bound methods to an incomplete forward-declared class, which only
+    # works under the Itanium ABI. TYPED_METHOD_BIND makes it bind against the real class
+    # instead, avoiding that mismatched reinterpret_cast on MSVC-ABI targets.
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC" OR (WIN32 AND CMAKE_CXX_COMPILER_ID MATCHES "Clang"))
+        target_compile_definitions(${TARGET_NAME} PRIVATE TYPED_METHOD_BIND)
+    endif()
 
     # Keep float behaviour identical to the one libJolt was compiled with.
     target_compile_options(${TARGET_NAME} PRIVATE
