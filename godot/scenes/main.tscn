@@ -73,14 +73,17 @@ directional_shadow_max_distance = 400.0
 
 [node name="ProceduralTerrain" type="Node3D" parent="."]
 script = ExtResource("3_terrain")
-terrain_size = 256
-terrain_scale = 2.0
-noise_scale = 100.0
-max_height = 150.0
+terrain_size = 512
+terrain_scale = 60.0
+noise_scale = 600.0
+max_height = 300.0
 seed_value = 42
-octaves = 4
+octaves = 5
 persistence = 0.55
 lacunarity = 2.1
+continent_scale = 2500.0
+flatness = 3.0
+water_level = 25.0
 
 [node name="Ground" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.05, 0)

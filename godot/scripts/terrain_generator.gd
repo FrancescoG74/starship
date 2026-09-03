@@ -1,38 +1,52 @@
 extends Node3D
-## Procedural terrain generator using FastNoise3D with mesh generation
+## Procedural terrain generator using FastNoiseLite with mesh generation
 
 @export var terrain_size: int = 512  # Size of the terrain mesh in vertices (per side)
-@export var terrain_scale: float = 2.0  # World space scale per vertex
-@export var noise_scale: float = 100.0  # Scale of terrain features
-@export var max_height: float = 150.0  # Maximum terrain height
+@export var terrain_scale: float = 60.0  # World space scale per vertex
+@export var noise_scale: float = 600.0  # Scale of terrain features
+@export var max_height: float = 300.0  # Maximum terrain height
 @export var seed_value: int = 42  # Random seed for reproducibility
-@export var octaves: int = 4  # Number of noise octaves for detail
+@export var octaves: int = 5  # Number of noise octaves for detail
 @export var persistence: float = 0.55  # Amplitude reduction per octave
 @export var lacunarity: float = 2.1  # Frequency multiplication per octave
 
-var noise: FastNoise3D
+@export var continent_scale: float = 2500.0  # Scale of large-scale landmass shape (plains vs mountains)
+@export var flatness: float = 3.0  # Higher = more low flat plains/lake basins, sharper mountain transitions
+@export var water_level: float = 25.0  # World height of the lake/water surface
+
+var noise: FastNoiseLite
+var continent_noise: FastNoiseLite
 var terrain_mesh: MeshInstance3D
 var terrain_collider: CollisionShape3D
+var water_mesh: MeshInstance3D
 
 func _ready() -> void:
 	setup_noise()
 	generate_terrain_mesh()
 	setup_collider()
+	setup_water()
 	print("Procedural terrain loaded - %d vertices, scale %.1fm, max height %.1fm" % [terrain_size * terrain_size, terrain_scale, max_height])
 
 func setup_noise() -> void:
-	"""Initialize FastNoise3D generator"""
-	noise = FastNoise3D.new()
+	noise = FastNoiseLite.new()
 	noise.seed = seed_value
 	noise.frequency = 1.0 / noise_scale
-	noise.fractal_type = FastNoise3D.FRACTAL_FBM
+	noise.fractal_type = FastNoiseLite.FRACTAL_FBM
 	noise.fractal_octaves = octaves
-	noise.fractal_persistence = persistence
+	noise.fractal_gain = persistence
 	noise.fractal_lacunarity = lacunarity
+
+	# Large-scale mask that decides where mountains rise vs. where plains/lake basins sit
+	continent_noise = FastNoiseLite.new()
+	continent_noise.seed = seed_value + 1000
+	continent_noise.frequency = 1.0 / continent_scale
+	continent_noise.fractal_type = FastNoiseLite.FRACTAL_FBM
+	continent_noise.fractal_octaves = 3
+	continent_noise.fractal_gain = 0.5
+	continent_noise.fractal_lacunarity = 2.0
 
 func generate_terrain_mesh() -> void:
 	"""Generate procedural terrain mesh from noise"""
-	var mesh_data = MeshDataTool.new()
 	var mesh = ArrayMesh.new()
 	
 	# Create vertices and height map
@@ -48,9 +62,11 @@ func generate_terrain_mesh() -> void:
 			var world_x = (x - half_size) * terrain_scale
 			var world_z = (z - half_size) * terrain_scale
 			
-			# Sample noise for height
-			var height_value = noise.get_noise_3d(world_x, 0.0, world_z)
-			var height = ((height_value + 1.0) / 2.0) * max_height
+			var detail = (noise.get_noise_3d(world_x, 0.0, world_z) + 1.0) / 2.0
+			var continent = (continent_noise.get_noise_3d(world_x, 0.0, world_z) + 1.0) / 2.0
+			# Skew the mask toward 0 so most of the map stays flat/low, with mountains only where continent is high
+			var mountain_mask = pow(continent, flatness)
+			var height = detail * mountain_mask * max_height
 			
 			vertices.append(Vector3(world_x, height, world_z))
 			uvs.append(Vector2(float(x) / terrain_size, float(z) / terrain_size))
@@ -77,9 +93,7 @@ func generate_terrain_mesh() -> void:
 	arrays[Mesh.ARRAY_TEX_UV] = uvs
 	arrays[Mesh.ARRAY_INDEX] = indices
 	
-	# Calculate normals
 	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
-	var mesh_with_normals = mesh.create_trimesh_shape()
 	
 	# Create material
 	var material = StandardMaterial3D.new()
@@ -93,6 +107,23 @@ func generate_terrain_mesh() -> void:
 	terrain_mesh.mesh = mesh
 	terrain_mesh.set_surface_override_material(0, material)
 	add_child(terrain_mesh)
+
+func setup_water() -> void:
+	"""Add a flat water plane that floods the low-lying basins created by the mountain mask"""
+	var water_material = StandardMaterial3D.new()
+	water_material.albedo_color = Color(0.1, 0.35, 0.55, 0.75)
+	water_material.roughness = 0.05
+	water_material.metallic = 0.2
+	water_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+
+	var plane = PlaneMesh.new()
+	plane.material = water_material
+	plane.size = Vector2(terrain_size * terrain_scale, terrain_size * terrain_scale)
+
+	water_mesh = MeshInstance3D.new()
+	water_mesh.mesh = plane
+	water_mesh.position = Vector3(0, water_level, 0)
+	add_child(water_mesh)
 
 func setup_collider() -> void:
 	"""Setup physics collider for terrain"""
