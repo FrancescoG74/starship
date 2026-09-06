@@ -5,6 +5,8 @@
 [ext_resource type="Script" path="res://scripts/terrain_generator.gd" id="3_terrain"]
 [ext_resource type="Script" path="res://scripts/gyro_horizon.gd" id="4_gyro"]
 [ext_resource type="Script" path="res://scripts/altimeter.gd" id="5_altimeter"]
+[ext_resource type="Script" path="res://scripts/airport_buildings.gd" id="6_airport"]
+[ext_resource type="Script" path="res://scripts/city_generator.gd" id="7_city"]
 
 [sub_resource type="ProceduralSkyMaterial" id="SkyMaterial_1"]
 sky_top_color = Color(0.16, 0.35, 0.72, 1)
@@ -98,6 +100,14 @@ mesh = SubResource("Mesh_runway")
 
 [node name="RunwayMarkers" type="Node3D" parent="."]
 script = ExtResource("2_markers")
+
+[node name="AirportBuildings" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 50, 0)
+script = ExtResource("6_airport")
+
+[node name="CityGenerator" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 50, 0)
+script = ExtResource("7_city")
 
 [node name="World" type="StarshipWorld" parent="."]
 gravity = 9.81
