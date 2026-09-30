@@ -7,7 +7,7 @@
 [ext_resource type="Script" path="res://scripts/gyro_horizon.gd" id="4_gyro"]
 [ext_resource type="Script" path="res://scripts/altimeter.gd" id="5_altimeter"]
 [ext_resource type="Script" path="res://scripts/airport_buildings.gd" id="6_airport"]
-[ext_resource type="Script" path="res://scripts/city_generator.gd" id="7_city"]
+[ext_resource type="Script" path="res://scripts/city_traffic.gd" id="7_traffic"]
 
 [sub_resource type="ProceduralSkyMaterial" id="SkyMaterial_1"]
 sky_top_color = Color(0.16, 0.35, 0.72, 1)
@@ -94,6 +94,9 @@ water_level = 25.0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 700, 44.8, -600)
 script = ExtResource("4_city")
 
+[node name="Traffic" type="Node3D" parent="City"]
+script = ExtResource("7_traffic")
+
 [node name="Ground" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.05, 0)
 mesh = SubResource("Mesh_ground")
@@ -110,17 +113,13 @@ script = ExtResource("2_markers")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 50, 0)
 script = ExtResource("6_airport")
 
-[node name="CityGenerator" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 50, 0)
-script = ExtResource("7_city")
-
 [node name="World" type="StarshipWorld" parent="."]
 gravity = 9.81
 runway_size = Vector3(60, 1, 4000)
 runway_center = Vector3(0, 50, 0)
 
 [node name="Starship" type="Starship" parent="World"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 250, 1800)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 52.1, 1800)
 
 [node name="Fuselage" type="MeshInstance3D" parent="World/Starship"]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0)
