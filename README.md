@@ -18,6 +18,7 @@ and feeds input; every force and moment comes from the C++ side.
 | [src/starship_world.cpp](src/starship_world.cpp) | `StarshipWorld` node: owns the Jolt world and the runway |
 | [src/starship.cpp](src/starship.cpp) | `Starship` node: thrust, lift, drag, stability and controls |
 | [godot/project.godot](godot/project.godot) | The Godot project with the runway scene and the HUD |
+| [godot/scripts/city_generator.gd](godot/scripts/city_generator.gd) | Builds the city beside the runway from the CC0 models in `godot/assets/city` ([Kenney Starter Kit City Builder](https://github.com/KenneyNL/Starter-Kit-City-Builder)) |
 
 ## Requirements
 

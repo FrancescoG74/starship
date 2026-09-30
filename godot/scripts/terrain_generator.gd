@@ -14,6 +14,12 @@ extends Node3D
 @export var flatness: float = 3.0  # Higher = more low flat plains/lake basins, sharper mountain transitions
 @export var water_level: float = 25.0  # World height of the lake/water surface
 
+@export var flatten_enabled: bool = true  # Level the ground under the city
+@export var flatten_center: Vector2 = Vector2(700.0, -600.0)  # City centre (world x, z)
+@export var flatten_half_extent: float = 400.0  # Half side of the fully flat square
+@export var flatten_blend: float = 600.0  # Distance over which the ground returns to natural height
+@export var flatten_height: float = 45.0  # World height of the flat site
+
 var noise: FastNoiseLite
 var continent_noise: FastNoiseLite
 var terrain_mesh: MeshInstance3D
@@ -67,6 +73,10 @@ func generate_terrain_mesh() -> void:
 			# Skew the mask toward 0 so most of the map stays flat/low, with mountains only where continent is high
 			var mountain_mask = pow(continent, flatness)
 			var height = detail * mountain_mask * max_height
+			if flatten_enabled:
+				var outside = (Vector2(world_x, world_z) - flatten_center).abs() - Vector2(flatten_half_extent, flatten_half_extent)
+				var distance = Vector2(maxf(outside.x, 0.0), maxf(outside.y, 0.0)).length()
+				height = lerpf(flatten_height, height, smoothstep(0.0, flatten_blend, distance))
 			
 			vertices.append(Vector3(world_x, height, world_z))
 			uvs.append(Vector2(float(x) / terrain_size, float(z) / terrain_size))

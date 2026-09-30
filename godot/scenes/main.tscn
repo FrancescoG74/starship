@@ -1,6 +1,11 @@
+<<<<<<< HEAD
 [gd_scene load_steps=17 format=3]
+=======
+[gd_scene load_steps=16 format=3]
+>>>>>>> 43bcfc8167ec52213a2fe282ddd042a6764832b7
 
 [ext_resource type="Script" path="res://scripts/hud.gd" id="1_hud"]
+[ext_resource type="Script" path="res://scripts/city_generator.gd" id="4_city"]
 [ext_resource type="Script" path="res://scripts/runway_markers.gd" id="2_markers"]
 [ext_resource type="Script" path="res://scripts/terrain_generator.gd" id="3_terrain"]
 [ext_resource type="Script" path="res://scripts/gyro_horizon.gd" id="4_gyro"]
@@ -88,6 +93,10 @@ lacunarity = 2.1
 continent_scale = 2500.0
 flatness = 3.0
 water_level = 25.0
+
+[node name="City" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 700, 44.8, -600)
+script = ExtResource("4_city")
 
 [node name="Ground" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.05, 0)
