@@ -2,6 +2,16 @@
 build/
 compile_commands.json
 
+# Stray in-source CMake configure (use the presets' build/<preset> dirs instead)
+/CMakeCache.txt
+/CMakeFiles/
+/_deps/
+/bin/
+/cmake_install.cmake
+/*.vcxproj
+/*.vcxproj.filters
+/*.sln
+
 # Compiled GDExtension libraries
 godot/bin/
 

@@ -79,6 +79,22 @@ FetchContent_Declare(JoltPhysics
     SOURCE_SUBDIR Build
 )
 
+# All modules linked into a target must share one CRT (/failifmismatch on
+# _ITERATOR_DEBUG_LEVEL otherwise). Jolt's Build/CMakeLists.txt only selects a
+# runtime library inside its "if (MSVC)" branch, which plain clang++ (frontend
+# variant GNU, even when targeting the MSVC ABI) never enters, so it falls
+# through to CMake's own CMAKE_MSVC_RUNTIME_LIBRARY default -- which picks the
+# debug CRT for CMAKE_BUILD_TYPE=Debug. godot-cpp's cmake/windows.cmake always
+# forces the static release CRT for its own targets regardless of build type,
+# but only writes that cache variable once it configures, which happens after
+# Jolt below. Force the same value up front so Jolt, godot-cpp, and our own
+# targets all agree.
+option(GODOTCPP_USE_STATIC_CPP "Link MinGW/MSVC C++ runtime libraries statically" ON)
+option(GODOTCPP_DEBUG_CRT "Compile with MSVC's debug CRT (/MDd)" OFF)
+set(CMAKE_MSVC_RUNTIME_LIBRARY
+    "MultiThreaded$<IF:$<BOOL:${GODOTCPP_DEBUG_CRT}>,DebugDLL,$<$<NOT:$<BOOL:${GODOTCPP_USE_STATIC_CPP}>>:DLL>>"
+    CACHE STRING "Select the MSVC runtime library for use by compilers targeting the MSVC ABI." FORCE)
+
 # --------------------------------------------------------------------------- #
 # godot-cpp
 # --------------------------------------------------------------------------- #
