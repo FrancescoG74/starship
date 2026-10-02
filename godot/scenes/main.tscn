@@ -91,7 +91,7 @@ flatness = 3.0
 water_level = 25.0
 
 [node name="City" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 700, 44.8, -600)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 700, 45.5, -600)
 script = ExtResource("4_city")
 
 [node name="Traffic" type="Node3D" parent="City"]

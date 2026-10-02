@@ -22,7 +22,7 @@ const GARAGE := "building-garage"
 const BUILDINGS := ["building-small-a", "building-small-b", "building-small-c", "building-small-d"]
 const FILLERS := ["grass-trees", "grass-trees-tall", PAVEMENT, GRASS]
 
-const ROAD_SURFACE_HEIGHT := 0.05  # Top of the kit's road tiles, in model units
+const ROAD_SURFACE_HEIGHT := 0.025  # Asphalt level of the kit's road tiles (curbs reach 0.05), in model units
 const GARAGE_CHANCE := 0.12
 const DOWNTOWN_BUILDING_CHANCE := 0.95
 const OUTSKIRTS_BUILDING_CHANCE := 0.35
